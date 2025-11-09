@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerere de iertare</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; font-family:'Poppins', sans-serif; overflow:hidden; background:#fdf6ec; color:#3b2f2f; }
+
+  body { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+  .text-section {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    max-width:600px;
+    text-align:center;
+    opacity:0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .text-section.active {
+    opacity:1;
+    transform:translate(-50%, -50%);
+  }
+
+  h1,h2 { margin-bottom:1rem; color:#5a4a42; }
+  p { line-height:1.6; }
+
+  .symbols-container { position:fixed; inset:0; overflow:hidden; z-index:0; }
+  .symbol { position:absolute; font-size:2rem; opacity:0.2; animation:float 12s ease-in-out infinite; }
+
+  @keyframes float {
+    0%,100% { transform:translateY(0) rotate(0deg); }
+    50% { transform:translateY(-40px) rotate(10deg); }
+  }
+
+  .scroll-indicator { font-size:2rem; margin-top:1rem; animation:bounce 1.5s infinite; color:#6b5c54; }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(10px);} }
+
+</style>
+</head>
+<body>
+
+<div class="symbols-container" id="symbols"></div>
+
+<div class="text-section active">
+  <h1>Salut!</h1>
+  <p>Dă scroll pentru a continua...</p>
+  <div class="scroll-indicator">↓</div>
+</div>
+
+<div class="text-section">
+  <p>Mă simt onorat că am putut să te cunosc.</p>
+</div>
+
+<div class="text-section">
+  <p>Eu sunt mai paranoic în general și acum mi se pare că te-am deranjat.</p>
+  <p>Vreau să cer iertare dacă te-am deranjat cu adevărat.</p>
+
+</div>
+
+
+<div class="text-section">
+  <p>Tot așa te rog să mă ierți că am fost disperat după tine.</p>
+</div>
+
+<div class="text-section">
+  <p>Vreau să cer iertare și pentru că nu prea a ieșit nimic cu mine la filmare 😅 </p>
+</div>
+
+<div class="text-section">
+  <h2>Mulțumesc că ai citit!</h2>
+  <p>După cum a zis și Grosu 😅 „dacă vrei să comunicăm, sau ceva mai frumos, eu sunt deschis la orice” doar ca prieteni.</p>
+  <p>Din nou te rog să mă ierți dacă te-am deranjat cu ceva în zilele acestea.</p>
+  <p>spor la editat</p>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.text-section');
+let currentIndex = 0;
+let isScrolling = false;
+
+// Szimbólumok a háttérben
+const container = document.getElementById("symbols");
+const symbols = ["☁️","✨","🕊️","🪶","☀️"];
+for(let i=0;i<25;i++){
+  const el=document.createElement("div");
+  el.className="symbol";
+  el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+  el.style.left=Math.random()*100+"%";
+  el.style.top=Math.random()*100+"%";
+  el.style.animationDelay=Math.random()*10+"s";
+  el.style.fontSize=1.5+Math.random()*2+"rem";
+  container.appendChild(el);
+}
+
+// Scroll és swipe kezelés
+function showSection(index){
+  sections.forEach((sec,i)=>{
+    sec.classList.toggle('active', i===index);
+  });
+}
+
+function handleScroll(direction){
+  if(isScrolling) return;
+  if(direction>0 && currentIndex<sections.length-1){
+    currentIndex++;
+    showSection(currentIndex);
+  } else if(direction<0 && currentIndex>0){
+    currentIndex--;
+    showSection(currentIndex);
+  }
+  isScrolling=true;
+  setTimeout(()=>isScrolling=false,600);
+}
+
+window.addEventListener('wheel', e=>{
+  e.preventDefault();
+  handleScroll(e.deltaY>0?1:-1);
+},{passive:false});
+
+// Touch swipe
+let touchStartY=0;
+window.addEventListener('touchstart', e=>{
+  touchStartY=e.changedTouches[0].screenY;
+},{passive:true});
+window.addEventListener('touchend', e=>{
+  const diff = touchStartY - e.changedTouches[0].screenY;
+  if(Math.abs(diff)>50){
+    handleScroll(diff>0?1:-1);
+  }
+},{passive:true});
+
+// Keyboard
+window.addEventListener('keydown', e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowRight') handleScroll(1);
+  if(e.key==='ArrowUp'||e.key==='ArrowLeft') handleScroll(-1);
+});
+</script>
+
+</body>
+</html>
